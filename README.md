@@ -1,6 +1,6 @@
 # api-dev-kit
 ## Description
-The API Developer Kit helps with developing APIs by giving you control over fetch (POST and GET) without having to write code. This allows you to test client side interaction with the server before you really write code and ebed it in a page. 
+The API Developer Kit helps with developing APIs by giving you control over fetch (POST and GET) without having to write code. This allows you to test client side interaction with the server before you embed it in a page.
 ## Installation
 Please note that you will have to add `sudo` in some cases
 ```bash
