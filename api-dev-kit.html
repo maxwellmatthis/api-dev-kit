@@ -1,278 +1,522 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Maxwell Matthis">
-    <meta name="copyright" content="Maxwell Matthis">
-    <title>API Developer Kit</title>
-</head>
-<body>
-    <header>
-        <h1>API Developer Kit</h1>
-        <h3>by Maxwell Matthis (<a href="https://github.com/maxwellmatthis" title="GitHub.com/maxwellmatthis" target="_blank">@maxwellmatthis</a>)</h3>
-    </header>
-    <main>
-        <section>
-            <h2>Post Request Builder</h2>
-            <button id="post-req-toggle" class="link">collapse section</button>
-            <section id="post-req-section">
-                <div>
-                    <h3>URL</h3>
-                    <input id="post-req-url" type="text" placeholder="http(s)://domain.com/route">
-                </div>
-                <div>
-                    <h3>Input (JSON)</h3>
-                    <textarea name="Input" id="post-req-params" placeholder="{ &quot;json&quot;: object }"></textarea>
-                </div>
-                <p>* This JSON object will be parsed and inserted into the body of a POST fetch function.</p>
-                <button id="post-req-do" class="btn">Go (Make Request)</button>
-                <div>
-                    <h3>Output</h3>
-                    <textarea name="Output" id="post-req-output" placeholder="Make a request to see the output!"></textarea>
-                </div>
-                <p>* Output will also be logged in the browser console.</p>
-            </section>
-        </section>
-        <section>
-            <h2>Get Request Builder</h2>
-            <button id="get-req-toggle" class="link">collapse section</button>
-            <section id="get-req-section">
-                <div>
-                    <h3>URL</h3>
-                    <input id="get-req-url" type="text" placeholder="http(s)://domain.com/route">
-                </div>
-                <div>
-                    <h3>Input (Text)</h3>
-                    <textarea name="Input" id="get-req-params" placeholder="param1=value1, param2=value2..."></textarea>
-                </div>
-                <p>* This will be parsed and inserted into the query of a GET fetch function.</p>
-                <button id="get-req-do" class="btn">Go (Make Request)</button>
-                <div>
-                    <h3>Output</h3>
-                    <textarea name="Output" id="get-req-output" placeholder="Make a request to see the output!"></textarea>
-                    <iframe id="get-req-iframe" style="display: none;" src="" frameborder="0"></iframe>
-                </div>
-                <p>* Output will also be logged in the browser console.</p>
-            </section>
-        </section>
-    </main>
-    <footer>
-        <ul>
-            <li>&copy; Maxwell Matthis</li>
-            <li><a href="https://github.com/maxwellmatthis" title="GitHub.com/maxwellmatthis" target="_blank">GitHub</a></li>
-            <li><a href="https://instagram.com/maxwellmatthis" title="Instagram.com/maxwellmatthis" target="_blank">Instagram</a></li>
-        </ul>
-    </footer>
-</body>
-<script>
-    /* DOM */
-    const postReqToggle = document.querySelector('#post-req-toggle');
-    const postReqSection = document.querySelector('#post-req-section');
-    const postReqDo = document.querySelector('#post-req-do');
-    const getReqToggle = document.querySelector('#get-req-toggle');
-    const getReqSection = document.querySelector('#get-req-section');
-    const getReqDo = document.querySelector('#get-req-do');
-    
-    /* Functions */
-    let postCollapsed = false;
-    postReqToggle.addEventListener('click', () => {
-        if (postCollapsed) {
-            postReqToggle.innerHTML = 'collapse section';
-            postReqSection.style.display = '';
-            postCollapsed = false;
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="author" content="Maxwell Matthis" />
+        <meta name="copyright" content="Maxwell Matthis" />
+        <title>API Developer Kit</title>
+    </head>
+    <body>
+        <div id="page-layout">
+            <header>
+                <h1>API Developer Kit</h1>
+                <p>
+                    By Maxwell Matthis (<a
+                        href="https://github.com/maxwellmatthis"
+                        title="GitHub.com/maxwellmatthis"
+                        target="_blank"
+                        >@maxwellmatthis</a
+                    >)
+                </p>
+            </header>
+            <main>
+                <section class="page-section">
+                    <section class="title-section">
+                        <h2>Post Request Builder</h2>
+                        <button id="post-req-toggle" class="btn-secondary">
+                            Collapse Section
+                        </button>
+                    </section>
+                    <section id="post-req-section">
+                        <div>
+                            <label for="post-req-url">URL</label>
+                            <input
+                                autocomplete="off"
+                                id="post-req-url"
+                                type="text"
+                                placeholder="http(s)://domain.com/route"
+                                oninput="postTextFieldChanged()"
+                            />
+                        </div>
+                        <div>
+                            <label for="post-req-params">Input (JSON)</label>
+                            <textarea
+                                name="Input"
+                                id="post-req-params"
+                                placeholder='{ "json": object }'
+                                oninput="postTextFieldChanged()"
+                            ></textarea>
+                        </div>
+                        <p>
+                            This JSON object will be parsed and inserted into
+                            the body of a POST fetch function.
+                        </p>
+                        <button id="post-req-do" class="btn-primary">
+                            Make Request
+                        </button>
+                        <div class="output">
+                            <label for="post-req-output">Output</label>
+                            <textarea
+                                name="Output"
+                                id="post-req-output"
+                                placeholder="Make a request to see the output!"
+                            ></textarea>
+                        </div>
+                        <p>
+                            Output will also be logged in the browser console.
+                        </p>
+                    </section>
+                </section>
+                <section class="page-section">
+                    <section class="title-section">
+                        <h2>Get Request Builder</h2>
+                        <button id="get-req-toggle" class="btn-secondary">
+                            Collapse Section
+                        </button>
+                    </section>
+                    <section id="get-req-section">
+                        <div>
+                            <label for="get-req-url">URL</label>
+                            <input
+                                id="get-req-url"
+                                type="text"
+                                placeholder="http(s)://domain.com/route"
+                                oninput="getTextFieldChanged()"
+                            />
+                        </div>
+                        <div>
+                            <label for="get-req-params">Input (Text)</label>
+                            <textarea
+                                name="Input"
+                                id="get-req-params"
+                                placeholder="param1=value1, param2=value2..."
+                                oninput="getTextFieldChanged()"
+                            ></textarea>
+                        </div>
+                        <p>
+                            This will be parsed and inserted into the query of a
+                            GET fetch function.
+                        </p>
+                        <button id="get-req-do" class="btn-primary">
+                            Make Request
+                        </button>
+                        <div class="output">
+                            <label for="get-req-output">Output</label>
+                            <textarea
+                                name="Output"
+                                id="get-req-output"
+                                placeholder="Make a request to see the output!"
+                            ></textarea>
+                            <iframe
+                                id="get-req-iframe"
+                                style="display: none;"
+                                src=""
+                                frameborder="0"
+                            ></iframe>
+                        </div>
+                        <p>
+                            Output will also be logged in the browser console.
+                        </p>
+                    </section>
+                </section>
+            </main>
+            <footer>
+                <ul>
+                    <li>&copy; Maxwell Matthis</li>
+                    <li>
+                        <a
+                            href="https://github.com/maxwellmatthis"
+                            title="GitHub.com/maxwellmatthis"
+                            target="_blank"
+                            >GitHub</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="https://instagram.com/maxwellmatthis"
+                            title="Instagram.com/maxwellmatthis"
+                            target="_blank"
+                            >Instagram</a
+                        >
+                    </li>
+                </ul>
+            </footer>
+        </div>
+    </body>
+    <script>
+        /* Get elements from DOM */
+        const postReqToggle = document.querySelector('#post-req-toggle');
+        const postReqSection = document.querySelector('#post-req-section');
+        const postReqDo = document.querySelector('#post-req-do');
+        const getReqToggle = document.querySelector('#get-req-toggle');
+        const getReqSection = document.querySelector('#get-req-section');
+        const getReqDo = document.querySelector('#get-req-do');
+
+        /* Toggle section visibility */
+        function toggleSectionVisibility(sender, target) {
+            if (target.style.display == 'none') {
+                sender.innerHTML = 'Collapse Section';
+                target.removeAttribute('style');
+            } else {
+                sender.innerHTML = 'Expand Section';
+                target.style.display = 'none';
+            }
         }
-        else {
-            postReqToggle.innerHTML = 'expand section';
-            postReqSection.style.display = 'none';
-            postCollapsed = true;
+
+        postReqToggle.addEventListener('click', () => {
+            toggleSectionVisibility(postReqToggle, postReqSection);
+        });
+
+        getReqToggle.addEventListener('click', () => {
+            toggleSectionVisibility(getReqToggle, getReqSection);
+        });
+
+        /* Textfield changed */
+
+        function textFieldChanged(textfield1, textfield2, target) {
+            if (textfield1.value !== '' && textfield2.value !== '') {
+                target.classList.add('btn-visible');
+            } else {
+                target.classList.remove('btn-visible');
+            }
         }
-    });
-    let getCollapsed = false;
-    getReqToggle.addEventListener('click', () => {
-        if (getCollapsed) {
-            getReqToggle.innerHTML = 'collapse section';
-            getReqSection.style.display = '';
-            getCollapsed = false;
+
+        function postTextFieldChanged() {
+            const urlTextField = document.querySelector('#post-req-url');
+            const inputTextField = document.querySelector('#post-req-params');
+            textFieldChanged(urlTextField, inputTextField, postReqDo);
         }
-        else {
-            getReqToggle.innerHTML = 'expand section';
-            getReqSection.style.display = 'none';
-            getCollapsed = true;
+
+        function getTextFieldChanged() {
+            const urlTextField = document.querySelector('#get-req-url');
+            const inputTextField = document.querySelector('#get-req-params');
+            textFieldChanged(urlTextField, inputTextField, getReqDo);
         }
-    });
-    postReqDo.addEventListener('click', async () => {
-        const url = document.querySelector('#post-req-url').value;
-        let body = document.querySelector('#post-req-params').value;
-        if (url !== '' && body !== '') {
-            try {
-                console.log('sending:');
-                console.log(JSON.parse(body));
-                let params = {
-                    method: 'POST',
-                    body: body,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
+
+        /* Button events */
+
+        postReqDo.addEventListener('click', async () => {
+            const url = document.querySelector('#post-req-url').value;
+            let body = document.querySelector('#post-req-params').value;
+            if (url !== '' && body !== '') {
                 try {
-                    const response = await fetch(url, params);
+                    console.log('sending:');
+                    console.log(JSON.parse(body));
+                    let params = {
+                        method: 'POST',
+                        body: body,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    };
+                    try {
+                        const response = await fetch(url, params);
+                        const answer = await response.json();
+                        console.log('received:');
+                        console.log(answer);
+                        document.querySelector(
+                            '#post-req-output'
+                        ).value = JSON.stringify(answer);
+                    } catch (xerr) {
+                        console.error(xerr);
+                        document.querySelector('#post-req-output').value = xerr;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    document.querySelector('#post-req-output').value = err;
+                }
+            } else {
+                console.error('Please use all fields!');
+            }
+        });
+
+        getReqDo.addEventListener('click', async () => {
+            const url = document.querySelector('#get-req-url').value;
+            let params = document.querySelector('#get-req-params').value;
+            if (url !== '' && params !== '') {
+                document.querySelector('#get-req-output').style.display = '';
+                document.querySelector('#get-req-iframe').style.display =
+                    'none';
+                document.querySelector('#get-req-iframe').src = '';
+                let query = params.replace(new RegExp(' ', 'g'), '').split(',');
+                for (let i = 0; i < query.length; i++)
+                    query[i] = query[i].trim() + '&';
+                if (query[query.length - 1] === '&') query.pop();
+                let queryString = '';
+                for (let i = 0; i < query.length; i++)
+                    queryString = queryString + query[i];
+                queryString = queryString.substring(0, queryString.length - 1);
+                console.log('sending:');
+                console.log(url + '?' + queryString);
+                let response = false;
+                try {
+                    response = await fetch(url + '?' + queryString);
                     const answer = await response.json();
                     console.log('received:');
                     console.log(answer);
-                    document.querySelector('#post-req-output').value = JSON.stringify(answer);
-                } catch (xerr) {
-                    console.error(xerr);
-                    document.querySelector('#post-req-output').value = xerr;
+                    document.querySelector(
+                        '#get-req-output'
+                    ).value = JSON.stringify(answer);
+                } catch (err) {
+                    if (response.status === 200) {
+                        document.querySelector('#get-req-output').value = '';
+                        document.querySelector(
+                            '#get-req-output'
+                        ).style.display = 'none';
+                        console.log('received:');
+                        console.log(response);
+                        document.querySelector('#get-req-iframe').src =
+                            url + '?' + queryString;
+                        document.querySelector(
+                            '#get-req-iframe'
+                        ).style.display = '';
+                    } else {
+                        console.error(err);
+                        document.querySelector('#get-req-output').value = err;
+                    }
                 }
-            } catch (err) {
-                console.error(err);
-                document.querySelector('#post-req-output').value = err;
+            } else {
+                console.error('Please use all fields!');
             }
+        });
+    </script>
+    <style>
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            margin: 0;
+            border: 0;
+            outline: 0;
+            padding: 0;
         }
-        else {
-            console.error('Please use all fields!');
+
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: white;
         }
-    });
-    getReqDo.addEventListener('click', async () => {
-        const url = document.querySelector('#get-req-url').value;
-        let params = document.querySelector('#get-req-params').value;
-        if (url !== '' && params !== '') {
-            document.querySelector('#get-req-output').style.display = '';
-            document.querySelector('#get-req-iframe').style.display = 'none';
-            document.querySelector('#get-req-iframe').src = '';
-            let query = params.replace(new RegExp(' ', 'g'), '').split(',');
-            for (let i = 0; i < query.length; i++) query[i] = query[i].trim() + '&';
-            if (query[query.length - 1] === '&') query.pop();
-            let queryString = '';
-            for (let i = 0; i < query.length; i++) queryString = queryString + query[i];
-            queryString = queryString.substring(0, queryString.length - 1);
-            console.log('sending:');
-            console.log(url + '?' + queryString);
-            let response = false;
-            try {
-                response = await fetch(url + '?' + queryString);
-                const answer = await response.json();
-                console.log('received:');
-                console.log(answer);
-                document.querySelector('#get-req-output').value = JSON.stringify(answer);
-            } catch (err) {
-                if (response.status === 200) {
-                    document.querySelector('#get-req-output').value = '';
-                    document.querySelector('#get-req-output').style.display = 'none';
-                    console.log('received:');
-                    console.log(response);
-                    document.querySelector('#get-req-iframe').src = url + '?' + queryString;
-                    document.querySelector('#get-req-iframe').style.display = '';
-                }
-                else {
-                    console.error(err);
-                    document.querySelector('#get-req-output').value = err;
-                }
-            }
+
+        #page-layout {
+            width: 100%;
+            max-width: 60rem;
+            margin: 0 auto;
+            padding: 0 1.25rem;
         }
-        else {
-            console.error('Please use all fields!');
+
+        a {
+            color: currentColor;
+            text-decoration: none;
+            font-weight: 400;
         }
-    });
-</script>
-<style>
-* {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  text-decoration: none;
-  color: #575757;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
-* h1 {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 45px;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem;
-}
-* h2 {
-  font-weight: 300;
-  font-size: 30px;
-  word-spacing: 5px;
-  margin-bottom: 0.5rem;
-}
-* h3 {
-  font-weight: 600;
-  word-spacing: 5px;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-* a,
-* button.link {
-  color: #0051ff;
-}
-* button {
-  background: none;
-  cursor: pointer;
-}
-* button.link {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-* button.btn {
-  height: 2rem;
-  border-radius: 0.4em;
-  border: none;
-  background-color: #0051ff;
-  color: #f4f4f4;
-}
-* code {
-  background-color: #323232;
-  color: #f4f4f4;
-  padding: 1px;
-  padding-left: 3px;
-  padding-right: 3px;
-  border-radius: 0.4em;
-}
-html body {
-  margin: 0 auto;
-  min-width: 500px;
-  max-width: 1000px;
-}
-html body main section section {
-  transition: 0.7s;
-}
-html body main section section div input {
-  width: 500px;
-}
-html body main section section div textarea {
-  width: 100%;
-  max-width: 100%;
-  height: 200px;
-  max-height: 1000px;
-}
-html body main section section div iframe {
-  width: 100%;
-  max-width: 100%;
-  height: 400px;
-}
-html body main section section button {
-  width: 100%;
-}
-html body footer {
-  margin-top: 4rem;
-}
-html body footer ul {
-  padding-left: 0;
-  text-align: right;
-}
-html body footer ul li {
-  display: inline-block;
-  padding-left: 0.5rem;
-}
-</style>
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        p {
+            margin-top: 0.5rem;
+            font-size: 10.5pt;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 15pt;
+            font-weight: 500;
+        }
+
+        label {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.8);
+            padding-bottom: 0.5rem;
+        }
+
+        .btn-secondary {
+            padding: 4px 12px;
+            font-size: 9pt;
+            line-height: 20px;
+            font-weight: 600;
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#fafbfc),
+                color-stop(90%, #eff3f6)
+            );
+            background: linear-gradient(-180deg, #fafbfc, #eff3f6 90%);
+            color: rgba(0, 0, 0, 0.8);
+            border-radius: 4px;
+            border: 1px solid rgba(27, 31, 35, 0.2);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#f0f3f6),
+                color-stop(90%, #e6ebf1)
+            );
+            background: linear-gradient(-180deg, #f0f3f6, #e6ebf1 90%);
+            border-color: rgba(27, 31, 35, 0.28);
+        }
+
+        .btn-primary {
+            padding: 4px 12px;
+            font-size: 9pt;
+            line-height: 20px;
+            font-weight: 600;
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#34d058),
+                color-stop(90%, #28a745)
+            );
+            background: linear-gradient(-180deg, #34d058, #28a745 90%);
+            color: white;
+            border-radius: 4px;
+            border: 1px solid rgba(27, 31, 35, 0.2);
+            cursor: pointer;
+            margin-top: 1rem;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .btn-primary:hover {
+            background: -webkit-gradient(
+                linear,
+                left top,
+                left bottom,
+                from(#2fcb53),
+                color-stop(90%, #269f42)
+            );
+            background: linear-gradient(-180deg, #2fcb53, #269f42 90%);
+            border-color: rgba(27, 31, 35, 0.28);
+        }
+
+        .btn-visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        input,
+        textarea {
+            font-size: 10.5pt;
+            padding: 0.5rem 0.75rem;
+            background-color: #fafbfc;
+            border: 1px solid #d1d5da;
+            border-radius: 0.25rem;
+            resize: vertical;
+            -webkit-box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
+            box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075);
+        }
+
+        input::-webkit-input-placeholder,
+        textarea::-webkit-input-placeholder {
+            opacity: 1;
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder {
+            opacity: 1;
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        input::-ms-input-placeholder,
+        textarea::-ms-input-placeholder {
+            opacity: 1;
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            opacity: 1;
+            color: rgba(0, 0, 0, 0.3);
+        }
+
+        input:focus,
+        textarea:focus {
+            background-color: white;
+            border-color: #2188ff;
+            -webkit-box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075),
+                0 0 0 0.2em rgba(3, 102, 214, 0.3);
+            box-shadow: inset 0 1px 2px rgba(27, 31, 35, 0.075),
+                0 0 0 0.2em rgba(3, 102, 214, 0.3);
+        }
+
+        header {
+            margin-top: 3rem;
+        }
+
+        header:after {
+            content: '';
+            display: block;
+            height: 1px;
+            width: 100%;
+            background-color: rgba(18, 18, 18, 0.08);
+            margin-top: 1rem;
+        }
+
+        main .page-section {
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(18, 18, 18, 0.08);
+        }
+
+        main .title-section {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+        }
+
+        main div {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            margin-top: 1rem;
+        }
+
+        main .output {
+            margin-top: 1.5rem;
+        }
+
+        footer {
+            padding: 1.5rem 0 3rem;
+        }
+
+        footer ul {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            list-style: none;
+        }
+
+        footer ul li {
+            color: rgba(0, 0, 0, 0.6);
+            margin-right: 1rem;
+            font-size: 10.5pt;
+            font-weight: 600;
+        }
+    </style>
 </html>
