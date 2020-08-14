@@ -120,6 +120,105 @@
                         </p>
                     </section>
                 </section>
+                <section class="page-section">
+                    <section class="title-section">
+                        <h2>Socket.io Emit Builder</h2>
+                        <button id="socket-req-toggle" class="btn-secondary">
+                            Collapse Section
+                        </button>
+                    </section>
+                    <section id="socket-req-section">
+                        <div>
+                            <label for="socket-req-url">URL</label>
+                            <input
+                                autocomplete="off"
+                                id="socket-req-url"
+                                type="text"
+                                placeholder="domain.com/namespace"
+                                oninput="socketTextFieldChanged()"
+                            />
+                        </div>
+                        <div>
+                            <label for="socket-req-event">Event</label>
+                            <input
+                                autocomplete="off"
+                                id="socket-req-event"
+                                type="text"
+                                placeholder="event"
+                                oninput="socketTextFieldChanged()"
+                            />
+                        </div>
+                        <div>
+                            <label for="socket-req-params">Input (JSON)</label>
+                            <textarea
+                                name="Input"
+                                id="socket-req-params"
+                                placeholder='{ "json": object }'
+                                oninput="socketTextFieldChanged()"
+                            ></textarea>
+                        </div>
+                        <p>
+                            This JSON object will be parsed and emitted to the specified socket.
+                        </p>
+                        <button id="socket-req-do" class="btn-primary">
+                            Connect and/or Emit
+                        </button>
+                        <div class="output">
+                            <label for="socket-req-output">Output</label>
+                            <textarea
+                                name="Output"
+                                id="socket-req-output"
+                                placeholder="Make a request to see the output!"
+                            ></textarea>
+                        </div>
+                        <p>
+                            Output will also be logged in the browser console.
+                        </p>
+                    </section>
+                </section>
+                <section class="page-section">
+                    <section class="title-section">
+                        <h2>Socket.io Event Listener</h2>
+                        <button id="socket-lis-toggle" class="btn-secondary">
+                            Collapse Section
+                        </button>
+                    </section>
+                    <section id="socket-lis-section">
+                        <div>
+                            <label for="socket-lis-url">URL</label>
+                            <input
+                                id="socket-lis-url"
+                                type="text"
+                                readonly
+                                placeholder="connect to a socket to listen for events"
+                            />
+                        </div>
+                        <div>
+                            <label for="socket-lis-event">Event</label>
+                            <input
+                                autocomplete="off"
+                                id="socket-lis-event"
+                                type="text"
+                                placeholder="event"
+                                oninput="socketLisTextFieldChanged()"
+                            />
+                        </div>
+                        <button id="socket-lis-do" class="btn-primary">
+                            Add Event Listener
+                        </button>
+                        <div class="output">
+                            <label for="socket-lis-output">Output</label>
+                            <textarea
+                                name="Output"
+                                id="socket-lis-output"
+                                placeholder="Add a listener to get output!"
+                            ></textarea>
+                        </div>
+                        <p>
+                            Output will also be logged in the browser console.
+                        </p>
+                    </section>
+                </section>
             </main>
             <footer>
                 <ul>
@@ -140,10 +239,20 @@
                             >Instagram</a
                         >
                     </li>
+                    <li>
+                        <a
+                            href="https://twitter.com/maxwellmatthis"
+                            title="Twitter.com/maxwellmatthis"
+                            target="_blank"
+                            >Twitter</a
+                        >
+                    </li>
                 </ul>
             </footer>
         </div>
     </body>
+    <!-- socket.io CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script>
         /* Get elements from DOM */
         const postReqToggle = document.querySelector('#post-req-toggle');
@@ -152,8 +261,15 @@
         const getReqToggle = document.querySelector('#get-req-toggle');
         const getReqSection = document.querySelector('#get-req-section');
         const getReqDo = document.querySelector('#get-req-do');
+        const socketReqToggle = document.querySelector('#socket-req-toggle');
+        const socketReqSection = document.querySelector('#socket-req-section');
+        const socketReqDo = document.querySelector('#socket-req-do');
+        const socketLisToggle = document.querySelector('#socket-lis-toggle');
+        const socketLisSection = document.querySelector('#socket-lis-section');
+        const socketLisDo = document.querySelector('#socket-lis-do');
 
         /* Toggle section visibility */
+
         function toggleSectionVisibility(sender, target) {
             if (target.style.display == 'none') {
                 sender.innerHTML = 'Collapse Section';
@@ -172,10 +288,18 @@
             toggleSectionVisibility(getReqToggle, getReqSection);
         });
 
+        socketReqToggle.addEventListener('click', () => {
+            toggleSectionVisibility(socketReqToggle, socketReqSection);
+        });
+
+        socketLisToggle.addEventListener('click', () => {
+            toggleSectionVisibility(socketLisToggle, socketLisSection);
+        });
+
         /* Textfield changed */
 
-        function textFieldChanged(textfield1, textfield2, target) {
-            if (textfield1.value !== '' && textfield2.value !== '') {
+        function textFieldChanged(textfield1, textfield2, target, textfield3) {
+            if (textfield1.value !== '' && textfield2.value !== '' && (textfield3 === undefined || textfield3.value !== '')) {
                 target.classList.add('btn-visible');
             } else {
                 target.classList.remove('btn-visible');
@@ -194,11 +318,24 @@
             textFieldChanged(urlTextField, inputTextField, getReqDo);
         }
 
+        function socketTextFieldChanged() {
+            const urlTextField = document.querySelector('#socket-req-url');
+            const eventTextField = document.querySelector('#socket-req-event');
+            const inputTextField = document.querySelector('#socket-req-params');
+            textFieldChanged(urlTextField, inputTextField, socketReqDo, eventTextField);
+        }
+
+        function socketLisTextFieldChanged() {
+            const urlTextField = document.querySelector('#socket-lis-url');
+            const eventTextField = document.querySelector('#socket-lis-event');
+            textFieldChanged(urlTextField, eventTextField, socketLisDo);
+        }
+
         /* Button events */
 
         postReqDo.addEventListener('click', async () => {
             const url = document.querySelector('#post-req-url').value;
-            let body = document.querySelector('#post-req-params').value;
+            const body = document.querySelector('#post-req-params').value;
             if (url !== '' && body !== '') {
                 try {
                     console.log('sending:');
@@ -233,7 +370,7 @@
 
         getReqDo.addEventListener('click', async () => {
             const url = document.querySelector('#get-req-url').value;
-            let params = document.querySelector('#get-req-params').value;
+            const params = document.querySelector('#get-req-params').value;
             if (url !== '' && params !== '') {
                 document.querySelector('#get-req-output').style.display = '';
                 document.querySelector('#get-req-iframe').style.display =
@@ -278,6 +415,55 @@
                 }
             } else {
                 console.error('Please use all fields!');
+            }
+        });
+
+        let socket;
+        let cUrl = '';
+        socketReqDo.addEventListener('click', async () => {
+            const url = document.querySelector('#socket-req-url').value;
+            const event = document.querySelector('#socket-req-event').value;
+            const body = document.querySelector('#socket-req-params').value;
+            if (url !== ''  && url !== cUrl && socket === undefined) {
+                try {
+                    console.log(`connecting to: ${url}`);
+                    cUrl = url;
+                    socket = io.connect(url);
+                    document.querySelector('#socket-lis-url').value = url;
+                    socketLisTextFieldChanged()
+                } catch(err) {
+                    console.error(err);
+                    document.querySelector('#socket-req-output').value = err;
+                }
+            }
+            if (cUrl !== '' && event !== '' && body !== '') {
+                try {
+                    console.log(`emmiting event ${event} with params:`);
+                    console.log(JSON.parse(body));
+                    socket.emit(String(event), JSON.parse(body));
+                    document.querySelector('#socket-req-output').value = 'Emmited!';
+                } catch (err) {
+                    console.error(err);
+                    document.querySelector('#socket-req-output').value = err;
+                }
+            } else {
+                console.error('Please use all fields!');
+            }
+        });
+
+        socketLisDo.addEventListener('click', async () => {
+            const event = document.querySelector('#socket-lis-event').value;
+            if (cUrl !== '') {
+                try {
+                    socket.on(event, (body) => {
+                        console.log(`${event}:`);
+                        console.log(JSON.stringify(body));
+                        document.querySelector('#socket-lis-output').value += `${event}: ${JSON.stringify(body)}\n`;
+                    });
+                } catch(err) {
+                    console.error(err);
+                    document.querySelector('#socket-lis-output').value += `error: ${err}\n`;
+                }
             }
         });
     </script>
