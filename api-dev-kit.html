@@ -457,7 +457,7 @@
                 try {
                     socket.on(event, (body) => {
                         console.log(`${event}:`);
-                        console.log(JSON.stringify(body));
+                        console.log(body);
                         document.querySelector('#socket-lis-output').value += `${event}: ${JSON.stringify(body)}\n`;
                     });
                 } catch(err) {
